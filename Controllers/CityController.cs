@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Data;
+using WebAPI.Data.Repo;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -14,51 +14,39 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CityController : ControllerBase
     {
-        private readonly DataContext dataContext;
+        private readonly ICityRepository cityRepository;
 
-        public CityController(DataContext dataContext)
+        public CityController( ICityRepository cityRepository)
         {
-            this.dataContext = dataContext;
+            this.cityRepository = cityRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var cities=await dataContext.Cities.ToListAsync();
+            var cities=await cityRepository.GetCitiesAsync();
             return Ok(cities);
-        }
-        //Post api/city
-        [HttpPost("add")]
-        [HttpPost("add/{cityname}")]
-        public async Task<IActionResult> AddCity(string cityName)
-        {
-            City city = new City();
-            city.Name = cityName;
-            await dataContext.Cities.AddAsync(city);
-            await dataContext.SaveChangesAsync();
-            return Ok(city);
         }
         //Post api/city
         [HttpPost("post")]
         public async Task<IActionResult> AddCity(City city)
         {
-            await dataContext.Cities.AddAsync(city);
-            await dataContext.SaveChangesAsync();
-            return Ok(city);
+             cityRepository.AddCity(city);
+            await cityRepository.SaveAsync();
+            return StatusCode(201);
         }
 
         //Delete api/city/delete/id
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCity(int id)
         {
-            var city = await dataContext.Cities.FindAsync(id);
-            dataContext.Cities.Remove(city);
-            await dataContext.SaveChangesAsync();
+            cityRepository.DeleteCity(id);
+            await cityRepository.SaveAsync();
             return Ok(id);
         }
-        [HttpGet("{id}")]
-        public string  Get(int id)
-        {
-            return "Atlanta";
-        }
+        //[HttpGet("{id}")]
+        //public string  Get(int id)
+        //{
+        //    return "Atlanta";
+        //}
     }
 }
