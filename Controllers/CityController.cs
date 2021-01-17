@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Data;
 using WebAPI.Data.Repo;
+using WebAPI.Interfaces;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -14,24 +15,24 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CityController : ControllerBase
     {
-        private readonly ICityRepository cityRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public CityController( ICityRepository cityRepository)
+        public CityController( IUnitOfWork unitOfWork)
         {
-            this.cityRepository = cityRepository;
+            this.unitOfWork = unitOfWork;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var cities=await cityRepository.GetCitiesAsync();
+            var cities=await unitOfWork.CityRepository.GetCitiesAsync();
             return Ok(cities);
         }
         //Post api/city
         [HttpPost("post")]
         public async Task<IActionResult> AddCity(City city)
         {
-             cityRepository.AddCity(city);
-            await cityRepository.SaveAsync();
+            unitOfWork.CityRepository.AddCity(city);
+            await unitOfWork.SaveAsync();
             return StatusCode(201);
         }
 
@@ -39,8 +40,8 @@ namespace WebAPI.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCity(int id)
         {
-            cityRepository.DeleteCity(id);
-            await cityRepository.SaveAsync();
+            unitOfWork.CityRepository.DeleteCity(id);
+            await unitOfWork.SaveAsync();
             return Ok(id);
         }
         //[HttpGet("{id}")]

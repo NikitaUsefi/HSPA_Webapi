@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.Interfaces;
 using WebAPI.Models;
 
 namespace WebAPI.Data.Repo
@@ -31,9 +32,6 @@ namespace WebAPI.Data.Repo
             return await dataContext.Cities.ToListAsync();
         }
 
-        public async Task<bool> SaveAsync()
-        {
-            return await dataContext.SaveChangesAsync() > 0;
-        }
+       
     }
 }
