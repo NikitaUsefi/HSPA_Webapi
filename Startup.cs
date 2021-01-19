@@ -15,6 +15,11 @@ using WebAPI.Data.Repo;
 using WebAPI.Helpers;
 using WebAPI.Interfaces;
 using AutoMapper;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using WebAPI.Extensions;
+using WebAPI.Middlewares;
 
 namespace WebAPI
 {
@@ -46,11 +51,9 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //app.ConfigureExceptionHandler(env);
 
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
 
             app.UseCors(m => m.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
