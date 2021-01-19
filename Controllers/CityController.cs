@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,32 +18,27 @@ namespace WebAPI.Controllers
     public class CityController : ControllerBase
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
 
-        public CityController( IUnitOfWork unitOfWork)
+        public CityController( IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var cities=await unitOfWork.CityRepository.GetCitiesAsync();
-            IEnumerable<CityDto> cityDtos = cities.Select(x => new CityDto
-            {
-                Id = x.Id,
-                Name = x.Name
-            });
+            IEnumerable<CityDto> cityDtos = mapper.Map<IEnumerable<CityDto>>(cities);
             return Ok(cityDtos);
         }
         //Post api/city
         [HttpPost("post")]
         public async Task<IActionResult> AddCity(CityDto cityDto)
         {
-            var city = new City
-            {
-                Name = cityDto.Name,
-                LastUpdatedBy = 1,
-                LastUpdatedOn = DateTime.Now
-            };
+            var city = mapper.Map<City>(cityDto);
+            city.LastUpdatedBy = 1;
+            city.LastUpdatedOn = DateTime.Now;
             unitOfWork.CityRepository.AddCity(city);
             await unitOfWork.SaveAsync();
             return StatusCode(201);

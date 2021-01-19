@@ -12,7 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Data;
 using WebAPI.Data.Repo;
+using WebAPI.Helpers;
 using WebAPI.Interfaces;
+using AutoMapper;
 
 namespace WebAPI
 {
@@ -32,6 +34,9 @@ namespace WebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddControllers();
             services.AddCors();
+
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+
 
             //services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
