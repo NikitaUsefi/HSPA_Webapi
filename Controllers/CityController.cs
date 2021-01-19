@@ -43,6 +43,28 @@ namespace WebAPI.Controllers
             await unitOfWork.SaveAsync();
             return StatusCode(201);
         }
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateCity(int id,CityDto cityDto)
+        {
+            var cityFromDb = await unitOfWork.CityRepository.FindCity(id);
+            cityFromDb.LastUpdatedBy = 1;
+            cityFromDb.LastUpdatedOn = DateTime.Now;
+            mapper.Map(cityDto, cityFromDb);
+            await unitOfWork.SaveAsync();
+            return StatusCode(200);
+
+        }
+        [HttpPut("updatecityname/{id}")]
+        public async Task<IActionResult> UpdateCity(int id, CityUpdateDto cityDto)
+        {
+            var cityFromDb = await unitOfWork.CityRepository.FindCity(id);
+            cityFromDb.LastUpdatedBy = 1;
+            cityFromDb.LastUpdatedOn = DateTime.Now;
+            mapper.Map(cityDto, cityFromDb);
+            await unitOfWork.SaveAsync();
+            return StatusCode(200);
+
+        }
 
         //Delete api/city/delete/id
         [HttpDelete("delete/{id}")]
