@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Data;
 using WebAPI.Data.Repo;
+using WebAPI.Dtos;
 using WebAPI.Interfaces;
 using WebAPI.Models;
 
@@ -25,12 +26,23 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Get()
         {
             var cities=await unitOfWork.CityRepository.GetCitiesAsync();
-            return Ok(cities);
+            IEnumerable<CityDto> cityDtos = cities.Select(x => new CityDto
+            {
+                Id = x.Id,
+                Name = x.Name
+            });
+            return Ok(cityDtos);
         }
         //Post api/city
         [HttpPost("post")]
-        public async Task<IActionResult> AddCity(City city)
+        public async Task<IActionResult> AddCity(CityDto cityDto)
         {
+            var city = new City
+            {
+                Name = cityDto.Name,
+                LastUpdatedBy = 1,
+                LastUpdatedOn = DateTime.Now
+            };
             unitOfWork.CityRepository.AddCity(city);
             await unitOfWork.SaveAsync();
             return StatusCode(201);
