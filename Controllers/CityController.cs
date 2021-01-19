@@ -46,12 +46,21 @@ namespace WebAPI.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateCity(int id,CityDto cityDto)
         {
-            var cityFromDb = await unitOfWork.CityRepository.FindCity(id);
-            cityFromDb.LastUpdatedBy = 1;
-            cityFromDb.LastUpdatedOn = DateTime.Now;
-            mapper.Map(cityDto, cityFromDb);
-            await unitOfWork.SaveAsync();
-            return StatusCode(200);
+            try
+            {
+                var cityFromDb = await unitOfWork.CityRepository.FindCity(id);
+                if (cityFromDb == null)
+                    return BadRequest("update not allowed");
+                cityFromDb.LastUpdatedBy = 1;
+                cityFromDb.LastUpdatedOn = DateTime.Now;
+                mapper.Map(cityDto, cityFromDb);
+                await unitOfWork.SaveAsync();
+                return StatusCode(200);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Some unknown error has occured");
+            }
 
         }
         [HttpPut("updatecityname/{id}")]
