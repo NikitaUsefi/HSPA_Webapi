@@ -13,9 +13,7 @@ using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CityController : ControllerBase
+    public class CityController : BaseController
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -30,7 +28,6 @@ namespace WebAPI.Controllers
         {
             var cities=await unitOfWork.CityRepository.GetCitiesAsync();
             IEnumerable<CityDto> cityDtos = mapper.Map<IEnumerable<CityDto>>(cities);
-            throw new UnauthorizedAccessException("test");
             return Ok(cityDtos);
         }
         //Post api/city
