@@ -30,6 +30,7 @@ namespace WebAPI.Controllers
         {
             var cities=await unitOfWork.CityRepository.GetCitiesAsync();
             IEnumerable<CityDto> cityDtos = mapper.Map<IEnumerable<CityDto>>(cities);
+            throw new UnauthorizedAccessException("test");
             return Ok(cityDtos);
         }
         //Post api/city
